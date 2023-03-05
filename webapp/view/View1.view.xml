@@ -4,6 +4,7 @@
             <Button icon="sap-icon://action" tooltip="Go to next screen" press="onNext"></Button>
         </headerContent>
         <content>
+        <!-- Anubhav Code change -->
             <!-- <Button text="Go to next" press="onNext" /> -->
             <SearchField id="idSearch" search="onSearch"></SearchField>
             <List items="{path : '/ProductSet'}" id="idFruitsColl" 

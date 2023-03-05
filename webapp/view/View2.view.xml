@@ -4,6 +4,7 @@
             <!-- <Button text="Back" press="onBack" /> -->
             <ObjectHeader title="{NAME}" intro="{DESCRIPTION}" number="{PRICE}" numberUnit="{CURRENCY_CODE}"
             icon="sap-icon://product"></ObjectHeader>
+            <!-- Anubhav Code change -->
             <IconTabBar>
                 <items>
                     <IconTabFilter text="More Info" icon="sap-icon://warning" key="idMore">
