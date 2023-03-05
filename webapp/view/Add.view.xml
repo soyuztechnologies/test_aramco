@@ -26,7 +26,8 @@
                     singleContainerFullSize="false" >
                     <f:content>
                         <Label text="ID" />
-                        <Input id="name" value="{prod>/productData/PRODUCT_ID}" />
+                        <Input id="name" value="{prod>/productData/PRODUCT_ID}" submit="onLoadSingle"/>
+                        <Button icon="sap-icon://collections-insight" tooltip="Load most expensive product" press="onLoadExp" />
                         <Label text="Name" />
                         <Input value="{prod>/productData/NAME}">
                         </Input>
@@ -57,7 +58,8 @@
         <footer>
         <Toolbar >
             <ToolbarSpacer ></ToolbarSpacer>
-            <Button text="Save" press="onSave" type="Accept"></Button>
+            <Button id="idCommit" text="Save" press="onSave" type="Accept"></Button>
+            <Button id="idDelete" visible="false" text="Delete" press="onDelete" type="Reject"></Button>
             <Button text="Clear" press="onClear" type="Emphasized"></Button>
         </Toolbar>
         </footer>

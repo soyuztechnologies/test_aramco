@@ -6,20 +6,19 @@
         <content>
             <!-- <Button text="Go to next" press="onNext" /> -->
             <SearchField id="idSearch" search="onSearch"></SearchField>
-            <List items="{path : '/ProductSet'
-                         }" id="idFruitsColl" growing="true" growingThreshold="10"
+            <List items="{path : '/ProductSet'}" id="idFruitsColl" 
                          selectionChange="onSelectItem"
-                         mode="SingleSelectMaster" delete="onDelete">
+                         growing="true" growingThreshold="10" mode="SingleSelectMaster" delete="onDelete">
                 <headerToolbar>
                     <Toolbar>
                         <Button icon="sap-icon://delete" press="onDeleteSelected" tooltip="Remove Selected Items"/>
                     </Toolbar>
                 </headerToolbar>
                 <items>
-                    <ObjectListItem title="{NAME}" intro="{CATEGORY}"
-                    number="{PRICE}" numberUnit="{CURRENCY_CODE}" icon="sap-icon://product">
+                    <ObjectListItem title="{PRODUCT_ID}" intro="{CATEGORY}"
+                    number="{PRICE}" numberUnit="{CURRENCY_CODE}" icon="{image}">
                         <firstStatus>
-                            <ObjectStatus text="{SUPPLIER_NAME}"></ObjectStatus>
+                            <ObjectStatus state="Success" text="{SUPPLIER_ID}"></ObjectStatus>
                         </firstStatus>
                     </ObjectListItem>
 
@@ -27,7 +26,10 @@
             </List>
         </content>
         <footer>
-            <Toolbar />
+            <Toolbar>
+                <ToolbarSpacer ></ToolbarSpacer>
+                <Button text="Add" icon="sap-icon://add" press="onAdd" />
+            </Toolbar>
         </footer>
     </Page>
 </mvc:View>

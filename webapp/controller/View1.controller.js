@@ -13,6 +13,9 @@ sap.ui.define([
             //when the app starts we initialize a router object
             this.oRouter = this.getOwnerComponent().getRouter();
         },
+        onAdd: function(){
+            this.oRouter.navTo("add");
+        },
         onDelete: function(oAnubhav){
             //get the event parameter from SDK which item to be deleted
             var itemToBeDeleted = oAnubhav.getParameter("listItem");
@@ -54,11 +57,11 @@ sap.ui.define([
             //     filters : [oFilter1, oFilter2],
             //     and: false
             // });
-            // var aFilter = [oFilter];
+            var aFilter = [oFilter1];
             //Pass the filter object on our items aggregation
             var oAgg = this.getView().byId("idFruitsColl").getBinding("items");
             //Inject our filter to the binding
-            oAgg.filter(oFilter1);
+            oAgg.filter(aFilter);
 
         },
         onNext: function(sPath){

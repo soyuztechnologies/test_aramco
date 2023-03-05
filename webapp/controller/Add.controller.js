@@ -15,10 +15,95 @@ sap.ui.define([
             var oModel = new JSONModel();
             oModel.setData(this.getInitialData());
             this.getView().setModel(oModel,"prod");
+            this.setMode("Create");
         },
         onClear: function(){
             let oModel = this.getView().getModel("prod");
             oModel.setData(this.getInitialData());
+            this.setMode("Create");
+        },
+        onLoadExp: function(){
+            //Step 1: Our odata object
+            var oDataModel = this.getView().getModel();
+            //Step 2: Call Function to load most expensive
+            var that = this;
+            oDataModel.callFunction("/GetMostExpensiveProduct",{
+                urlParameters: {
+                    I_CATEGORY: 'Notebooks'
+                },
+                //Step 3: Set data back to the screen from response
+                success: function(data){
+                    var oProdModel = that.getView().getModel("prod");
+                    oProdModel.setProperty("/productData",data);
+                    that.setMode("Update");
+                }
+            });
+        },
+        onDelete: function(){
+            MessageBox.confirm("Do you really want to delete",{
+                onClose: this.onDelConfirm.bind(this)
+            });
+        },
+        onDelConfirm: function(status){
+            if(status === "OK"){
+                var oDataModel = this.getView().getModel();
+                var prodId = this.prodId;
+                oDataModel.remove("/ProductSet('" + prodId + "')",{
+                    success: function(){
+                        MessageToast.show("Removed successfully");
+                    },
+                    error: function(){
+                        MessageToast.show("Action has failed");
+                    }
+                });
+            }else{
+                MessageToast.show("action was cancelled");
+            }
+        },
+        onLoadSingle: function(oEvent){
+            //Step 1: Read data of the product Id entered by user
+            var prodId = oEvent.getSource().getValue();
+            this.prodId = prodId;
+            if(!prodId){
+                return "";
+            }
+            //Step 2: Load our Odata Model
+            var oDataModel = this.getView().getModel();
+            //Step 3: Fire a GET call to read data by KEY - GET_ENTITY
+            // Path = /ProductSet('HT-1010')
+            //https://www.youtube.com/watch?v=RMsTYQe_3Jg
+            var that = this;
+            //var oProdModel = this.getView().getModel("prod");
+            oDataModel.read("/ProductSet('" + prodId +"')",{
+                //Step 4: Handle the response - Success, map data to local model
+                success: function(data){
+                    var oProdModel = that.getView().getModel("prod");
+                    oProdModel.setProperty("/productData",data);
+                    that.setMode("Update");
+                    that.setImage();
+                },
+                //Step 5: Handle the response - Error
+                error: function(oError){
+                    debugger;
+                    that.setMode("Create");
+                }
+            });
+            
+        },
+        prodId: "",
+        mode: "Create",
+        setMode: function(sMode){
+            if (sMode === "Create"){
+                this.getView().byId("idCommit").setText("Create");
+                this.mode = "Create";
+                this.getView().byId("name").setEnabled(true);
+                this.getView().byId("idDelete").setVisible(false);
+            }else{
+                this.getView().byId("idCommit").setText("Update");
+                this.mode = "Update";
+                this.getView().byId("name").setEnabled(false);
+                this.getView().byId("idDelete").setVisible(true);
+            }
         },
         onSave: function(){
             //Step 1: Access the Data and preapre payload
@@ -31,21 +116,38 @@ sap.ui.define([
             var oDataModel = this.getView().getModel();
             //Step 3: Use the model object and POST the data to
             //        Product Entityset
-
-            //JS Is Asynchronous NonBlocking IO
-            oDataModel.create("/ProductSet", payload,{
-                //Step 4: Once the data is posted, check the response
-                //        if success, show success message
-                success: function(data){
-                    MessageToast.show("Wallah! You made it Amigo!");
-                },
-                //Step 5: Handle the error 
-                error: function(oError){
-                    var errorMessage = JSON.parse(oError.responseText).error.innererror.errordetails[0].message;
-                    MessageBox.error(errorMessage);                    
-                    //debugger;
-                }
-            });
+            if(this.mode === "Create"){
+                //JS Is Asynchronous NonBlocking IO
+                oDataModel.create("/ProductSet", payload,{
+                    //Step 4: Once the data is posted, check the response
+                    //        if success, show success message
+                    success: function(data){
+                        MessageToast.show("Wallah! You made it Amigo!");
+                    },
+                    //Step 5: Handle the error 
+                    error: function(oError){
+                        var errorMessage = JSON.parse(oError.responseText).error.innererror.errordetails[0].message;
+                        MessageBox.error(errorMessage);                    
+                        //debugger;
+                    }
+                });
+            }else{
+                //JS Is Asynchronous NonBlocking IO
+                oDataModel.update("/ProductSet('" + payload.PRODUCT_ID +"')", payload,{
+                    //Step 4: Once the data is posted, check the response
+                    //        if success, show success message
+                    success: function(data){
+                        MessageToast.show("Wallah! You made it Amigo!");
+                    },
+                    //Step 5: Handle the error 
+                    error: function(oError){
+                        var errorMessage = JSON.parse(oError.responseText).error.innererror.errordetails[0].message;
+                        MessageBox.error(errorMessage);                    
+                        //debugger;
+                    }
+                });
+            }
+            
         },
         getInitialData: function(){
             return {
@@ -58,7 +160,6 @@ sap.ui.define([
                     "SUPPLIER_ID": "0100000046",
                     "SUPPLIER_NAME": "SAP",
                     "PRICE": "0.00",
-                    "TAX_TARIF_CODE": "1 ",
                     "CURRENCY_CODE": "USD",
                     "DIM_UNIT": "CM"
                 }
