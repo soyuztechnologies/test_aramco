@@ -7,6 +7,7 @@ sap.ui.define([
         //where we can put all the initialization code
         onInit: function(){
             // alert("welcome to my app");
+            // this is testing Rakesh change
         }
     });
 });
